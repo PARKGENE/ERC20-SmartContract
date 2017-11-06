@@ -18,16 +18,16 @@ The PARKGENE App transfers the full parking fee amount, in GENEs, from the drive
  height="auto">
 
 
-<b>Bug Bounty Program</b></br></br>
-We are starting our bug bounty program for all PARKGENE smart contracts relating to our GENE Token sale.
-Total amount of GENE Tokens distributed for this category is  3,250,000 GENE.
-Most of the rules on https://bounty.ethereum.org apply:
-	•	First come, first serve.
-	•	Issues that have already been submitted by another user or are already known to the PARKGENE team are not eligible for bounty rewards.
-	•	Public disclosure of a vulnerability makes it ineligible for a bounty.
-	•	Anyone who was a paid auditor of this code is not eligible for rewards.
-	•	Determinations of eligibility, score and all terms related to an award are at the sole and final discretion of the PARKGENE team.
-Scope
+<b>Bug Bounty Program</b></br><br>
+We are starting our bug bounty program for all PARKGENE smart contracts relating to our GENE Token sale.<br>
+Total amount of GENE Tokens distributed for this category is  3,250,000 GENE.<br>
+Most of the rules on https://bounty.ethereum.org apply:<br>
+	•	First come, first serve.</br>
+	•	Issues that have already been submitted by another user or are already known to the PARKGENE team are not eligible for bounty rewards.</br>
+	•	Public disclosure of a vulnerability makes it ineligible for a bounty.<br>
+	•	Anyone who was a paid auditor of this code is not eligible for rewards.<br>
+	•	Determinations of eligibility, score and all terms related to an award are at the sole and final discretion of the PARKGENE team.<br>
+Scope</br>
 All smart contracts relating to the GENE token sale.
 
 
