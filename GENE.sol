@@ -440,9 +440,4 @@ contract GENEToken is Owned, AdvancedToken {
     }
 
 
-
-    function kill() onlyOwner public {
-        selfdestruct(owner); 
-}
-
 }
