@@ -232,7 +232,7 @@ contract AdvancedToken is TokenERC20 {
     }
 
         /**
-     * Destroy tokens from other ccount
+     * Destroy tokens from account
      *
      * Remove `_value` tokens from the system irreversibly on behalf of `_from`.
      *
@@ -295,7 +295,7 @@ contract GENEToken is Owned, AdvancedToken {
     /* Initializes contract with initial supply tokens to the creator of the contract */
     function GENEToken() AdvancedToken(1000000000, "PARKGENE Token", "GENE") public {
      }
-
+    //Assign tokens to the required(during the token sale) addresses
     function assignTokensToInitialHolders(address _earlyBirdAddress, address _pretokenSaleAddress, address _bountyAddress, address _tokenSaleAddress, address _foundersAddress, address _AdvisorsAddress, address _EmployeesBoardAddress, address _parkgeneFutureFundAddress, address _parkgeneCharityFundAddress) onlyOwner public {
         require (_pretokenSaleAddress != 0x0);     // Prevent transfer to 0x0 address. 
         require (_bountyAddress != 0x0);     
@@ -347,9 +347,10 @@ contract GENEToken is Owned, AdvancedToken {
     }
 
 
-    /* End early bird */
-    function endEarlyBird() onlyOwner public {
+    /* End early bird, transfer remaining tokens to the provided address and init token presale */
+    function endEarlyBird(address _to) onlyOwner public {
         require (tokenSaleStatus==TokenStatus.EarlyBirdStarted);
+        _transfer(earlyBirdAddress,_to, balanceOf[earlyBirdAddress]);
         tokenSaleStatus = TokenStatus.TokenPreSaleStarted;
         earlyBirdEnded = now; 
         tokenPreSaleStarted = now; 
