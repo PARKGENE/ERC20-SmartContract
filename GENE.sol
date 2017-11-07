@@ -77,7 +77,7 @@ contract TokenERC20 is SafeMath {
     event Burn(address indexed from, uint256 value);
 
     /**
-     * Constrctor function
+     * Constructor function
      *
      * Initializes contract with initial supply tokens to the creator of the contract
      */
@@ -184,7 +184,7 @@ contract TokenERC20 is SafeMath {
 /*       ADVANCED TOKEN STARTS HERE       */
 /******************************************/
 /**
-* Constrctor function
+* Constructor function
 *
 * Initializes contract with initial supply tokens to the creator of the contract
 */
@@ -387,7 +387,7 @@ contract GENEToken is Owned, AdvancedToken {
     }
 
 
-        /* dispatch Tokens to founder(PARKGURU)*/
+        /* transfer tokens to founders, the allowed number of tokens is 30% after token sale,30% after 3 months and 40% after 6 months of the total founders tokens(10%)*/
     function dispatchToFounders() onlyOwner public {  
         require(tokenSaleStatus>=TokenStatus.TokenSaleEnded);
         require(remainingFoundersTokens>0);
@@ -411,7 +411,7 @@ contract GENEToken is Owned, AdvancedToken {
     }
 
 
-        /* Finish destribution, dispatch bounty tokens and move tokens from owner to PARKGENE*/
+        /* Finish the token destribution, transfer bounty tokens to Charity fund address*/
     function dispatchBountyToparkgeneCharityFund() onlyOwner public {
         require(tokenSaleStatus>=TokenStatus.TokenSaleEnded);  
         _transfer(bountyAddress,parkgeneCharityFundAddress,balanceOf[bountyAddress]);
