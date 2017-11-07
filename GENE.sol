@@ -350,6 +350,7 @@ contract GENEToken is Owned, AdvancedToken {
     /* End early bird, transfer remaining tokens to the provided address and init token presale */
     function endEarlyBird(address _to) onlyOwner public {
         require (tokenSaleStatus==TokenStatus.EarlyBirdStarted);
+        if (balanceOf[earlyBirdAddress]>0)
         _transfer(earlyBirdAddress,_to, balanceOf[earlyBirdAddress]);
         tokenSaleStatus = TokenStatus.TokenPreSaleStarted;
         earlyBirdEnded = now; 
@@ -357,15 +358,16 @@ contract GENEToken is Owned, AdvancedToken {
     }
 
     /* End token presale */
-    function endtokenPreSale() onlyOwner public {
+    function endTokenPreSale() onlyOwner public {
         require (tokenSaleStatus==TokenStatus.TokenPreSaleStarted);
         tokenSaleStatus = TokenStatus.TokenPreSaleEnded;
         tokenPreSaleEnded = now; 
+        if (balanceOf[tokenPreSaleAddress]>0)
         _burnFrom(tokenPreSaleAddress, balanceOf[tokenPreSaleAddress]);
     }
 
        /* Start token sale */
-    function starttokenSale() onlyOwner public {    
+    function startTokenSale() onlyOwner public {    
         require (tokenPreSaleAddress != 0x0);     
         require (tokenSaleStatus==TokenStatus.TokenPreSaleEnded);       
         tokenSaleStatus = TokenStatus.TokenSaleStarted;
@@ -376,13 +378,14 @@ contract GENEToken is Owned, AdvancedToken {
 
 
     /* End token sale */
-    function endtokenSale() onlyOwner public {
+    function endTokenSale() onlyOwner public {
         require (tokenSaleStatus==TokenStatus.TokenSaleStarted);
         tokenSaleStatus = TokenStatus.TokenSaleEnded;
         tokenPreSaleEnded = now; 
         afterSaleFoundersDispatch1 = now; 
         afterSaleFoundersDispatch2 = now + 90 days;
         afterSaleFoundersDispatch3 = now + 180 days;
+        if (balanceOf[tokenSaleAddress]>0)
         _burnFrom(tokenSaleAddress, balanceOf[tokenSaleAddress]);       
     }
 
@@ -413,7 +416,8 @@ contract GENEToken is Owned, AdvancedToken {
 
         /* Finish the token destribution, transfer bounty tokens to Charity fund address*/
     function dispatchBountyToparkgeneCharityFund() onlyOwner public {
-        require(tokenSaleStatus>=TokenStatus.TokenSaleEnded);  
+        require(tokenSaleStatus>=TokenStatus.TokenSaleEnded); 
+        if (balanceOf[bountyAddress]>0) 
         _transfer(bountyAddress,parkgeneCharityFundAddress,balanceOf[bountyAddress]);
         tokenSaleStatus = TokenStatus.FinalTokenDistributationEnded;
     }
