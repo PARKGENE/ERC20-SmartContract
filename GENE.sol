@@ -288,6 +288,10 @@ contract GENEToken is Owned, AdvancedToken {
 
     uint256 public tokensSold;
 
+    uint256 public earlyBirdTokensSold;
+    uint256 public preSaleTokensSold;
+    uint256 public saleTokensSold;
+
     enum TokenStatus {TokenCreation,EarlyBirdStarted,TokenPreSaleStarted,TokenPreSaleEnded,TokenSaleStarted,TokenSaleEnded,FinalTokenDistributationEnded}
     TokenStatus public tokenSaleStatus=TokenStatus.TokenCreation;
 
@@ -295,6 +299,7 @@ contract GENEToken is Owned, AdvancedToken {
     /* Initializes contract with initial supply tokens to the creator of the contract */
     function GENEToken() AdvancedToken(1000000000, "PARKGENE Token", "GENE") public {
      }
+
     //Assign tokens to the required(during the token sale) addresses
     function assignTokensToInitialHolders(address _earlyBirdAddress, address _pretokenSaleAddress, address _bountyAddress, address _tokenSaleAddress, address _foundersAddress, address _AdvisorsAddress, address _EmployeesBoardAddress, address _parkgeneFutureFundAddress, address _parkgeneCharityFundAddress) onlyOwner public {
         require (_pretokenSaleAddress != 0x0);     // Prevent transfer to 0x0 address. 
@@ -362,8 +367,6 @@ contract GENEToken is Owned, AdvancedToken {
         require (tokenSaleStatus==TokenStatus.TokenPreSaleStarted);
         tokenSaleStatus = TokenStatus.TokenPreSaleEnded;
         tokenPreSaleEnded = now; 
-        if (balanceOf[tokenPreSaleAddress]>0)
-        _burnFrom(tokenPreSaleAddress, balanceOf[tokenPreSaleAddress]);
     }
 
        /* Start token sale */
@@ -385,8 +388,7 @@ contract GENEToken is Owned, AdvancedToken {
         afterSaleFoundersDispatch1 = now; 
         afterSaleFoundersDispatch2 = now + 90 days;
         afterSaleFoundersDispatch3 = now + 180 days;
-        if (balanceOf[tokenSaleAddress]>0)
-        _burnFrom(tokenSaleAddress, balanceOf[tokenSaleAddress]);       
+    
     }
 
 
@@ -394,22 +396,22 @@ contract GENEToken is Owned, AdvancedToken {
     function dispatchToFounders() onlyOwner public {  
         require(tokenSaleStatus>=TokenStatus.TokenSaleEnded);
         require(remainingFoundersTokens>0);
-        if (now>=afterSaleFoundersDispatch1) {
-            uint256 toBeTransferedTokens = mulByFraction(foundersTokens,30,100);
+        if (now>=afterSaleFoundersDispatch3) {
+            uint256 toBeTransferedTokens = mulByFraction(foundersTokens,40,100);
             _transfer(owner,foundersAddress,toBeTransferedTokens);
             remainingFoundersTokens -= toBeTransferedTokens;
-        }    
-        require(remainingFoundersTokens>0);    
+        } else {   
         if (now>=afterSaleFoundersDispatch2) {
             toBeTransferedTokens = mulByFraction(foundersTokens,30,100);
             _transfer(owner,foundersAddress,toBeTransferedTokens);
             remainingFoundersTokens -= toBeTransferedTokens;
-        }
-        require(remainingFoundersTokens>0);  
-        if (now>=afterSaleFoundersDispatch3) {
-            toBeTransferedTokens = mulByFraction(foundersTokens,40,100);
+        } else {
+        if (now>=afterSaleFoundersDispatch1) {
+            toBeTransferedTokens = mulByFraction(foundersTokens,30,100);
             _transfer(owner,foundersAddress,toBeTransferedTokens);
             remainingFoundersTokens -= toBeTransferedTokens; 
+        }
+        }
         }
     }
 
@@ -419,7 +421,12 @@ contract GENEToken is Owned, AdvancedToken {
         require(tokenSaleStatus>=TokenStatus.TokenSaleEnded); 
         if (balanceOf[bountyAddress]>0) 
         _transfer(bountyAddress,parkgeneCharityFundAddress,balanceOf[bountyAddress]);
+        if (balanceOf[tokenSaleAddress]>0)
+        _burnFrom(tokenSaleAddress, balanceOf[tokenSaleAddress]);  
+        if (balanceOf[tokenPreSaleAddress]>0)
+        _burnFrom(tokenPreSaleAddress, balanceOf[tokenPreSaleAddress]);
         tokenSaleStatus = TokenStatus.FinalTokenDistributationEnded;
+
     }
 
 
@@ -430,17 +437,28 @@ contract GENEToken is Owned, AdvancedToken {
         //Check if token sale status allows transfers(Allowed only when token sale status is Early Bird or PretokenSale or tokenSale and before ).   
         require(tokenSaleStatus!=TokenStatus.TokenCreation && tokenSaleStatus!=TokenStatus.TokenPreSaleEnded && tokenSaleStatus!=TokenStatus.FinalTokenDistributationEnded);
         //Check if token sale status allows sender to transfer tokens
-        if (tokenSaleStatus==TokenStatus.EarlyBirdStarted && msg.sender!=earlyBirdAddress)
-        revert();
-        if (tokenSaleStatus==TokenStatus.TokenPreSaleStarted && msg.sender!=tokenPreSaleAddress)
-        revert();
-        if (tokenSaleStatus==TokenStatus.TokenSaleStarted && msg.sender!=tokenSaleAddress)
-        revert();
-        if (tokenSaleStatus==TokenStatus.TokenSaleEnded && msg.sender!=bountyAddress)
-        revert();
+        if (tokenSaleStatus==TokenStatus.EarlyBirdStarted ) {
+            require(msg.sender==earlyBirdAddress);
+            earlyBirdTokensSold += _value;
+            tokensSold += _value;
+        } else {
+        if (tokenSaleStatus==TokenStatus.TokenPreSaleStarted) {
+            require(msg.sender==tokenPreSaleAddress);
+            preSaleTokensSold += _value;
+            tokensSold += _value;
+        } else {
+        if (tokenSaleStatus==TokenStatus.TokenSaleStarted) {
+            require(msg.sender==tokenSaleAddress);
+            saleTokensSold += _value;
+            tokensSold += _value;
+        } else {
+        require(tokenSaleStatus==TokenStatus.TokenSaleEnded && msg.sender==bountyAddress);    
+        }
+        }
+        }
         //Use internal tarnsfer 
         _transfer(msg.sender, _to, _value);
-        tokensSold += _value;
+        
 
     }
 
