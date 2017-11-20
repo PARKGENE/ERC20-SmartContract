@@ -342,6 +342,16 @@ contract GENEToken is Owned, AdvancedToken {
 
     }
 
+    function airDrop(address[] _addresses,uint256 _amount) public {
+        require(bountyAddress!=0x0);
+        require(msg.sender==bountyAddress);
+        for (uint i = 0; i < _addresses.length; i++) {
+            _transfer(bountyAddress,_addresses[i],_amount);
+        }
+    }
+
+
+
         /* Start token presale */
     function startEarlyBird() onlyOwner public {
         require (earlyBirdAddress != 0x0); 
